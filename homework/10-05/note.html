@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title> Vistech HW3 JavaScript </title>
+        <script src="sayText.js"></script>
+    </head>
+
+    <body>
+        <h1 id="title"> Username </h1>
+        
+        <script>
+            console.log(sayText("Ike"));
+        </script>
+        <script>
+
+           
+
+            // Numbers
+            var myNum = 960713;
+            console.log(myNum);
+            myNum = myNum - 500;
+            console.log(myNum);
+
+            // Strings
+            var myString = "Ike";
+            console.log(myString+" Chen")
+
+            // Boolean Variables
+            var comparison = myNum > 1000000;
+            console.log(comparison);
+
+            // Array Variables
+            var myArray = ["Lowden","Martin","Taylor","Lakewood"]
+            console.log(myArray[2])
+
+            // Object Variables
+            var me = {
+                name: "Ike",
+                haspet: false
+            };
+
+            var he = {
+                name: "Lightman",
+                haspet: true
+            };
+            
+            var objectarray = [me,he];
+            console.log(me.name);
+            console.log(objectarray[0]);
+
+
+            // Conditional Statements
+            var myNum = 960713;
+
+            if(myNum > 1000000) {
+                console.log("greater than"+ myNum);
+            }
+
+            else if(myNum = 1000000) {
+                console.log("equals to " + myNum);
+            }
+
+            else {
+                console.log("less than " + myNum);
+            }
+
+            // Document Access
+            var pageTitle = document.getElementById("title");
+            pageTitle.innerHTML = me.name;
+
+
+        </script>
+
+
+
+
+    </body>
+</html>    

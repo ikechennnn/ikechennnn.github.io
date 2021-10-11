@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title> Vistech HW3 JavaScript </title>
+        <link rel="stylesheet" href="birthdaycard.css">
+        <script src=""></script>
+    </head>
+
+    <body>
+        <div class="birthdayCard">
+            <div class="cardFront"><h3 class="happy">HAPPY BIRTHDAY!</h3>
+            <div class="balloons">
+              <div class="balloonOne"></div>
+              <div class="balloonTwo"></div>
+              <div class="balloonThree"></div>
+              <div class="balloonFour"></div>
+            </div>
+            </div>
+              <div class="cardInside">
+                <h3 class="back">HAPPY BIRTHDAY!</h3>
+                <p class="friend" >Dear Friend,</p>
+                <p>Happy birthday!! I hope your day is filled with lots of love and laughter! May all of your birthday wishes come true.</p>
+                <p class="name" >xxx</p>
+              </div>
+            </div>
+        
+        <script>
+            
+            var senderinput = window.prompt("Enter your name: ");
+            var reveicerinput = window.prompt("Enter receiver's name: ");
+            console.log(reveicerinput,senderinput);
+            var receiver = doucument.getElementsByClassName("friend");
+            var sender = doucument.getElementsByClassName("name");
+            console.log(reveicer,sender);
+            receiver.innerHTML = "Dear "+ reveicerinput + ",";
+            sender.innerHTML = enderinput;
+            
+            var Output = function(txt1,txt2){
+                var receiver = document.getElementsById("friend");
+                var sender = document.getElementsById("name");
+                receiver.innerHTML = "Dear "+ txt1+ ",";
+                sender.innerHTML = txt2;
+            }
+            console.log(Output(reveicerinput,senderinput));
+        </script>
+        
+
+
+    </body>
+</html>    
