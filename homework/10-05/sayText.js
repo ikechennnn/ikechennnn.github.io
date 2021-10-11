@@ -5,6 +5,3 @@ var sayText = function(txt){
     return alertString;
 }
 
-<script>
-console.log(sayText("Ike"));
-</script>

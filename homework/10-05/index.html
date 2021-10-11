@@ -4,7 +4,7 @@
         <meta charset="utf-8" />
         <title> Vistech HW3 JavaScript </title>
         <link rel="stylesheet" href="birthdaycard.css">
-        <script src=""></script>
+        
     </head>
 
     <body>
@@ -19,30 +19,36 @@
             </div>
               <div class="cardInside">
                 <h3 class="back">HAPPY BIRTHDAY!</h3>
-                <p class="friend" >Dear Friend,</p>
+                <p id="friend" id="friend" >Dear Friend,</p>
                 <p>Happy birthday!! I hope your day is filled with lots of love and laughter! May all of your birthday wishes come true.</p>
-                <p class="name" >xxx</p>
+                <p class="name" id="name" id="name" >xxx</p>
               </div>
             </div>
         
         <script>
             
+            // var senderinput = window.prompt("Enter your name: ");
+            // var reveicerinput = window.prompt("Enter receiver's name: ");
+            // console.log(reveicerinput,senderinput);
+            // var sender = document.getElementById("name");
+            // var receiver = document.getElementById("friend");
+            // console.log(receiver,sender);
+            // receiver.innerHTML = "Dear "+ reveicerinput + ",";
+            // sender.innerHTML = senderinput;
+            
             var senderinput = window.prompt("Enter your name: ");
             var reveicerinput = window.prompt("Enter receiver's name: ");
             console.log(reveicerinput,senderinput);
-            var receiver = doucument.getElementsByClassName("friend");
-            var sender = doucument.getElementsByClassName("name");
-            console.log(reveicer,sender);
-            receiver.innerHTML = "Dear "+ reveicerinput + ",";
-            sender.innerHTML = enderinput;
-            
+           
             var Output = function(txt1,txt2){
-                var receiver = document.getElementsById("friend");
-                var sender = document.getElementsById("name");
-                receiver.innerHTML = "Dear "+ txt1+ ",";
-                sender.innerHTML = txt2;
+                
+                var sender = document.getElementById("name");
+                var receiver = document.getElementById("friend");
+                console.log(receiver,sender);
+                receiver.innerHTML = "Dear "+ reveicerinput + ",";
+                sender.innerHTML = senderinput;
             }
-            console.log(Output(reveicerinput,senderinput));
+            Output(reveicerinput,senderinput);
         </script>
         
 
