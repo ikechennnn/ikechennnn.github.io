@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title> Vistech HW4 D3 </title>
+        <!-- <link rel="stylesh eet" href="style.css"> -->
+        
+        <style>
+          
+        </style>
+
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script src="http://d3js.org/topojson.v1.min.js"></script>
+     
+           
+        
+    </head>
+
+    <body>
+      <script>
+
+        // create the background
+        var canvas = d3.select("body").append("svg")
+            .attr("width", 1000)
+            .attr("height", 500);
+        
+        
+        d3.json("states.json", function (data){
+          // bind the data in g tag 
+          var group = canvas.selectAll("g")
+              .data(data.features)
+              .enter()
+              .append("g");
+          
+          // choose a projection method to project the path
+          var projection = d3.geoMercator().scale(700).translate([1600,750]);
+          var path = d3.geoPath(projection);  
+
+          // create each group
+          var states = group.append("path")
+              .attr("d",path)
+              .attr("class","states")
+              .attr("fill","#ccc")
+              .attr("stroke","#999");
+          
+          // group.append("text")
+          //      .attr("x", function(d){return path.centroid(d)[0];})
+          //      .attr("y", function(d){return path.centroid(d)[1];})
+          //      .attr("text.anchor", "middle")
+          //      .text(function(d){return d.properties.NAME;})
+        
+        });
+
+        var data1 = [
+                {
+                    hurricane: "KATRINA",
+                    value: 5
+                    
+                },
+                {
+                    hurricane: "IVAN",
+                    value: 3
+                }
+            ];
+        
+            var data2 = [
+                {
+                    hurricane: "KATRINA",
+                    value: 5
+                    
+                },
+                {
+                    hurricane: "RITA",
+                    value: 4
+                    
+                },
+            ];
+        
+  
+            
+        function drawSquares(dataArray){
+            
+            var squares = canvas.selectAll("rect")
+                .data(dataArray, function(d){
+                    return d.hurricane;
+                });
+                console.log(squares)
+            // Entering Squares
+            squares
+                .enter()
+                .append("rect")
+                .attr("fill", function(d){
+                    if (d.hurricane == "KATRINA"){
+                        return "#F06060";
+                    }
+                    if (d.hurricane == "RITA"){
+                        return "#8CBEB2";
+                    }
+                    if (d.hurricane == "IVAN"){
+                        return "#F2EBBF";
+                    }
+                  })
+                .attr("id", function(d){
+                    return d.hurricane;
+                })
+                .attr("y", function(d){
+                    if (d.hurricane == "KATRINA"){
+                        return 400;
+                    }
+                    if (d.hurricane == "RITA"){
+                        return 350;
+                    }
+                    if (d.hurricane == "IVAN"){
+                        return 450;
+                    }
+                    })
+                .attr("x", function(d){
+                    if (d.hurricane == "KATRINA"){
+                        return 500;
+                    }
+                    if (d.hurricane == "RITA"){
+                        return 480;
+                    }
+                    if (d.hurricane == "IVAN"){
+                        return 550;
+                    }
+                    })
+                .attr("width", 0)
+                .attr("height", 0)
+                .transition().duration(1000)
+                .attr("width", function(d){
+                    return d.value * 5;
+                    })
+                .attr("height", function(d){
+                    return d.value * 5;
+                    });
+        
+            // Updating Squares
+            squares
+                .transition().duration(3000)
+                .attr("y", function(d){
+                    if (d.hurricane == "KATRINA"){
+                        return 400;
+                    }
+                    if (d.hurricane == "RITA"){
+                        return 350;
+                    }
+                    if (d.hurricane == "IVAN"){
+                        return 450;
+                    }
+                    })
+                .attr("x", function(d){
+                    if (d.hurricane == "KATRINA"){
+                        return 500;
+                    }
+                    if (d.hurricane == "RITA"){
+                        return 480;
+                    }
+                    if (d.hurricane == "IVAN"){
+                        return 550;
+                    }
+                    });
+            
+            // Exiting Squares
+            squares.exit()
+                .transition().duration(1000)
+                .attr("width", 0)
+                .attr("height", 0)
+                .remove();
+        
+        }
+
+      </script>
+      <br>
+      <!-- Buttons -->
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     
+     
+      <button onclick="drawSquares(data1)">Sep</button>
+      <button onclick="drawSquares(data2)">Oct</button>
+      
+    </body>
+</html>    
