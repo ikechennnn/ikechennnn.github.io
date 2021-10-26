@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title> Vistech HW5 Data </title>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        
+    </head>
+
+    <body>
+        
+        <script>
+            // Load txt
+            d3.text("text sample.txt", function(error, txtdata){
+                if(error){
+                    console.log(error);
+                }
+                else{
+                    console.log("wo hoo!");
+                    console.log(txtdata);
+                }
+            });
+            // load CSV
+            d3.csv("country.csv", function(error, csvdata){
+                if(error){
+                    console.log(error);
+                }
+                
+                // Loop through an array to change the string to value
+                else{ csvdata.forEach(function(row){
+                    row.value = parseFloat(row.value);
+                });
+
+                 // filtering data
+                var usData = csvdata.filter(function(row){
+                    return row.country == "usa"
+                });
+                    console.log("usData", usData);
+
+                // minimum value
+                var columnName = "value";
+                var minimumValue = d3.min(csvdata, function(row){
+                    return row.value;
+                    return row[columnName];
+                });
+                    console.log("min",minimumValue);
+                
+                // grouping data
+                var groupedData = d3.nest()
+                                   .key(function(d){
+                                       return d.country;
+                                   })
+                                   .entries(csvdata);
+                    
+                    console.log(groupedData);   
+                
+                // creating a mapping
+                var countryMapping = {
+                    "CAN": "canada",
+                    "USA": "usa",
+                    "MEX": "mexico"
+                };
+
+                csvdata.forEach(function(row){
+                    row.fullName = countryMapping[row.country];
+                    row.shortName = countryMapping[row.country];
+                });
+
+                    console.log(csvdata);
+                }
+                
+            });
+
+            // load Json
+            d3.json("country.json", function(error, jsondata){
+                console.log(jsondata);
+            });
+
+            // load Api
+            var url = "https://datausa.io/api/data?measures=Population&year=latest";
+
+            d3.json(url, function(error, apidata){
+                console.log(apidata);
+            });
+
+
+        </script>
+
+
+
+
+    </body>
+</html>    
