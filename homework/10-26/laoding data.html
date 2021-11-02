@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title> Loading data </title>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        
+    </head>
+
+    <body>
+        
+        <script>
+            
+            // load CSV
+            d3.csv("hurricane.csv", function(error, csvdata){
+                if(error){
+                    console.log(error);
+                }
+
+                else{ 
+                    console.log(csvdata)
+                };
+                
+            
+    
+                
+            });
+
+            
+
+            
+
+        </script>
+
+
+
+
+    </body>
+</html>    
