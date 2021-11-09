@@ -1,0 +1,20 @@
+#chart {
+    background-color: #2B2E33;
+
+}
+
+.domin{
+    stroke: #FFFFFF;
+}
+
+text {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    stroke: #FFFFFF;
+    font-weight: normal;
+
+}
+
+#shapes{
+    background-color:aqua;
+
+}
