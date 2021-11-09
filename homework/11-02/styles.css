@@ -3,18 +3,21 @@
 
 }
 
-.domin{
-    stroke: #FFFFFF;
+.domain{
+    stroke:#FFFFFF;
 }
 
 text {
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    stroke: #FFFFFF;
+    fill: #FFFFFF;
     font-weight: normal;
 
 }
+line {
+    stroke:#FFFFFF;
+}
 
 #shapes{
-    background-color:aqua;
+    fill:aqua;
 
 }
