@@ -1,14 +1,15 @@
 body {
     font-family:'Trade Gothic LT W01 Bd CnNo-20';
     margin: 0;
-    /* background-image: url("banner.png"); */
+    background-image: url("banner.png");
+    background-size: cover;
 }
   
 #banner {
-    background-color: #FFFFFF;
+    /* background-color: #FFFFFF;
     background-image: url("banner.png");
     background-position: center;
-    background-size: cover;
+    background-size: cover; */
     padding: 20vh 20px;
     text-align: center;
 }
@@ -17,6 +18,7 @@ body {
     display: flex;
     flex-direction: column;
     padding: 50px;
+    background-color: #FFFFFF;
   }
   
 .section p {

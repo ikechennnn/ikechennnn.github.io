@@ -1,0 +1,63 @@
+body {
+    font-family:'Trade Gothic LT W01 Bd CnNo-20';
+    margin: 0;
+    background-image: url("banner.png");
+    background-size: cover;
+}
+  
+#banner {
+    /* background-color: #FFFFFF;
+    background-image: url("banner.png");
+    background-position: center;
+    background-size: cover; */
+    padding: 20vh 20px;
+    text-align: center;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    padding: 50px;
+    background-color: #FFFFFF;
+  }
+  
+.section p {
+    /* flex: 1; */
+    /* flex-wrap: wrap; */
+    margin: 20px;
+}
+  
+/* .section svg {
+    border: 1px solid #808080;
+    flex: 6;
+    height: 300px;
+    margin: 20px;
+} */
+
+#chart1 {
+    border: 1px solid #808080;
+    /* flex: 4; */
+    height: 500px;
+    margin: 20px;
+}
+
+#chart2 {
+    border: 1px solid #808080;
+    /* flex: 6; */
+    height: 300px;
+    margin: 20px;
+}
+
+@media (max-width: 600px) {
+    .section {
+      flex-direction: column;
+    }
+    .section svg {
+      flex: none;
+    }
+}
+
+#tooltip {
+    display: none;
+    position: absolute;
+}

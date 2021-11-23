@@ -16,7 +16,16 @@ d3.select(window)
   .on("scroll", function() {
 
     var y = bannerPosition(window.scrollY);
-    d3.select("#banner")
+    d3.select("#banner.")
+      .style("background-position", "80% " + y + "%");
+
+  });
+
+d3.select(window)
+  .on("scroll", function() {
+
+    var y = bannerPosition(window.scrollY);
+    d3.select(".section")
       .style("background-position", "80% " + y + "%");
 
   });
