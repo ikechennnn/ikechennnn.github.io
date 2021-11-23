@@ -46,18 +46,18 @@
     <script src="chart2.js"></script>
     <script>
 
-      var mapdata = d3.csv("cleaned2.csv", function(error, csvdata){
-          if(error){
-              console.log(error);
-          }
+      // var mapdata = d3.csv("cleaned2.csv", function(error, csvdata){
+      //     if(error){
+      //         console.log(error);
+      //     }
           
-          // Loop through an array to change the string to value
-          else{ csvdata.forEach(function(row){
-              row.value = parseFloat(row.value);
-          });
+      //     // Loop through an array to change the string to value
+      //     else{ csvdata.forEach(function(row){
+      //         row.value = parseFloat(row.value);
+      //     });
       
-          console.log(mapdata);
-      });
+      //     console.log(mapdata);
+      // });
 
       var width = 1650;
       var height = 500;
