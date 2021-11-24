@@ -25,6 +25,7 @@
         <rect id="scaleRect" fill="url(#colorGradient)" />
         <g id="scaleAxis"></g>
       </g>
+      <g id="legend"></g>
     </svg>
 
     <script>
@@ -33,8 +34,8 @@
       var frequency = 1 * 1000;
       var margin = {
         top: 20,
-        right: 20,
-        bottom: 50,
+        right: 150,
+        bottom: 100,
         left: 40
       };
 
@@ -46,9 +47,21 @@
       var chartWidth = width - margin.left - margin.right;
       var chartHeight = height - margin.top - margin.bottom;
 
+      var scaleWidth = 300;
+      var scaleHeight = 20;
+      var scaleX = margin.left + chartWidth / 2 - (scaleWidth / 2);
+      var scaleY = margin.top + chartHeight + 40;
+
       var svg = d3.select("#chart")
         .attr("width", width)
         .attr("height", height);
+
+      var scale = svg.select("#scale")
+        .attr("transform", "translate(" + scaleX + ", " + scaleY + ")");
+
+      scale.select("#scaleRect")
+        .attr("width", scaleWidth)
+        .attr("height", scaleHeight);
 
       var dataRange = d3.range(1, dataMax + 1);
 
@@ -70,17 +83,49 @@
           });
           if (data.length > dataMax) data.pop();
           console.log(data);
+          if (data.length === dataMax) clearInterval(myInterval);
 
           var maxUsers = d3.max(data, function(d) {
             return d.users;
           });
+
+          var minUsers = d3.min(data, function(d) {
+            return d.users;
+          });
+
+          var barColor = d3.scaleSequential(d3.interpolateViridis)
+            .domain([0, maxUsers]);
+            // .range(["red", "green"]);
+          
+          var stopsData = d3.range(0, 1.1, 0.1);
+        
+          svg.select("#colorGradient").selectAll("stop")
+            .data(stopsData).enter()
+            .append("stop")
+              .attr("offset", function(d) {
+                return d * 100 + "%";
+              })
+              .attr("stop-color", function(d) {
+                return barColor(d * maxUsers);
+              });
+          
+          var scaleX = d3.scaleLinear()
+            .domain([0, maxUsers])
+            .range([0, scaleWidth]);
+
+          var scaleAxis = d3.axisBottom(scaleX);
+
+          scale.select("#scaleAxis")
+            .attr("transform", "translate(0, " + scaleHeight + ")")
+            .transition().duration(frequency / 2)
+            .call(scaleAxis);
 
           var barHeight = d3.scaleLinear()
             .domain([0, maxUsers])
             .range([0, chartHeight]);
 
           var y = d3.scaleLinear()
-            .domain([0, maxUsers])
+            .domain([minUsers - 10, maxUsers])
             .range([margin.top + chartHeight, margin.top]);
 
           var yAxis = d3.axisLeft(y);
@@ -134,16 +179,31 @@
             .attr("x", function(d, i) {
               return x(i + 1);
             })
+            .attr("fill", function(d) {
+                return barColor(d.users);
+            })
             .transition().duration(frequency / 2)
-              .attr("height", function(d) {
+            
+            .attr("height", function(d) {
                 return barHeight(d.users);
-              })
-              .attr("y", function(d) {
+            })
+            .attr("y", function(d) {
                 return y(d.users);
-              });
+            });
+        
+          //
+        //   bars.merge(enter)
+        //     .transition().duration(frequency / 2)
+        //     .attr("fill", function(d) {
+        //       return barColor(d.users);
+        //     })
+          
 
           // Bar "update" events and animation
           bars.transition().duration(frequency / 2)
+            .attr("fill", function(d) {
+                return barColor(d.users);
+            })
             .attr("height", function(d) {
               return barHeight(d.users);
             })
@@ -165,7 +225,7 @@
       }
 
       fetchData();
-      setInterval(fetchData, frequency);
+      var myInterval = setInterval(fetchData, frequency);
 
     </script>
 
