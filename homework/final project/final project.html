@@ -53,11 +53,12 @@
           
       //     // Loop through an array to change the string to value
       //     else{ csvdata.forEach(function(row){
-      //         row.value = parseFloat(row.value);
+      //         row.value = parseFloat(row.value)
+      //         console.log(mapdata);
       //     });
       
-      //     console.log(mapdata);
-      // });
+          
+      
 
       var width = 1650;
       var height = 500;
@@ -94,9 +95,19 @@
           .attr("fill", "#ccc")
           .attr("vector-effect","non-scaling-stroke")
           .attr("stroke", "#999")
-          .attr("stroke-width", "0.5px")
+          .attr("stroke-width", "0.5px");
       
+      var mapdata = d3.csv("cleaned2.csv", function(error, csvdata){
+                if(error){
+                    console.log(error);
+                }
+
+                else{ 
+                    console.log(csvdata)
+                };
+            });
       
+
       
       });
 
