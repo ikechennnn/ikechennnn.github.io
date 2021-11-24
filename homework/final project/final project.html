@@ -97,7 +97,7 @@
           .attr("stroke", "#999")
           .attr("stroke-width", "0.5px");
       
-      var mapdata = d3.csv("cleaned2.csv", function(error, csvdata){
+      d3.csv("cleaned2.csv", function(error, csvdata){
                 if(error){
                     console.log(error);
                 }
