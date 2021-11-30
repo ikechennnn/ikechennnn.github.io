@@ -41,10 +41,10 @@ body {
     margin: 20px;
 }
 
-#chart2 {
-    border: 1px solid #808080;
+#Layer_1 {
+    /* border: 1px solid #808080; */
     /* flex: 6; */
-    height: 300px;
+    height: 800px;
     margin: 20px;
 }
 
@@ -60,4 +60,9 @@ body {
 #tooltip {
     display: none;
     position: absolute;
+}
+
+svg {
+    background-color: #FFFFFF;
+
 }
