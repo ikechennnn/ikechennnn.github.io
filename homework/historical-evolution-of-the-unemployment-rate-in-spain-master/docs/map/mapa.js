@@ -105,8 +105,7 @@ var mapCan = d3
 
 // year info on the top left cornor
 d3.select("#tasa").html(
-  "Trimestre " + trimestres[trimestres.length - 1].substring(5)
-);
+  "Trimestre " + trimestres[trimestres.length - 1].substring(5));
 d3.select("#year").html(trimestres[trimestres.length - 1].substring(0, 4));
 
 var height = 330,
@@ -115,7 +114,7 @@ var height = 330,
 var w = 950,
   h = 380;
 var aux = trimestres.length - 1;
-var width_slider = 920;
+var width_slider = 920; // slider size
 var height_slider = 50;
 d3.csv("../data/historico.csv", function(data) {
   d3.json("../data/Provincias.json", function(json) {
@@ -174,6 +173,7 @@ d3.csv("../data/historico.csv", function(data) {
         })
         .tickSize(0)
         .tickValues(axisyears);
+      // add axis
       svg
         .append("g")
         .attr("class", "axis")
@@ -257,10 +257,10 @@ d3.csv("../data/historico.csv", function(data) {
       for (var i = 0; i < data.length; i++) {
         // console.log(data.length);
         var codeState = data[i].code;
-            console.log(codeState);
+            // console.log(codeState);
         var dataValue = data[i][trimestres[trimestres.length - 1]];
-            console.log(trimestres[trimestres.length - 1]);
-            console.log(dataValue);
+            // console.log(trimestres[trimestres.length - 1]);
+            // console.log(dataValue);
         for (var j = 0; j < json.features.length; j++) {
           var jsonState = json.features[j].properties.code;
           // find the same code and assign values
@@ -287,7 +287,7 @@ d3.csv("../data/historico.csv", function(data) {
         .attr("class", "path")
         .attr("d", path)
         .style("fill", function(d) {
-          // console.log(d.properties.value);
+          console.log(d.properties.value);
           return getColor(d.properties.value);
         })
         .attr("fill-opacity", "1")

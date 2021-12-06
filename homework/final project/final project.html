@@ -25,13 +25,22 @@
 
     </div>
 
-    <!-- <div class="section">
+    <div class="section" id="wrapper">
       <svg id="chart1">
         <g id="map"></g>
       </svg>
+      <div id="Brush">
+        <div id="brush"></div>
+      </div>
+      <div id="Slider">
+        <div id="slidingbar"></div>
+      </div>
+
       <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ut enim sit amet turpis elementum tristique at in mauris. Etiam egestas nulla vel leo dictum eleifend. Aenean ac gravida leo. Phasellus sed justo rutrum, iaculis orci vel, fringilla nisi. Pellentesque vestibulum aliquam odio, sed suscipit metus aliquet rutrum. Nam pharetra et nibh a semper. Phasellus a eleifend magna. Nulla vel sapien vulputate, finibus justo ac, convallis odio. Nulla et augue arcu. Duis porta augue laoreet lacus dictum, eu hendrerit sem tempor. Integer condimentum, enim sit amet sollicitudin pretium, ligula leo convallis nibh, eget aliquam ex orci vitae quam. Morbi maximus.</p>
       
-    </div> -->
+    </div>
+
+    
 
     <div class="section">
       <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 530.82 253.98">
@@ -295,43 +304,62 @@
     </div>
 
     <script src="banner.js"></script>
-    <script src="chart1.js"></script>
+    <!-- <script src="chart1.js"></script> -->
     <script src="chart2.js"></script>
+    <script src="symbol_map.js"></script>
+    <script src="brush.js"></script>
     <script>
 
   
           
-    
-      // var width = 1650;
-      // var height = 500;
+      var Vis = {};
+      Vis.data = new Array();
+      var width = 1350;
+      var height = 500;
+      var chart1Width = document.getElementById("chart1").getBoundingClientRect().width;
+      var chart1Height = document.getElementById("chart1").getBoundingClientRect().height;
+
+      // var popup = d3
+      //   .select("#wrapper")
+      //   .append("div")
+      //   .attr("class", "tooltip")
+      //   // .attr("opacity", 0);
 
       var svg = d3.select("#chart1")
-      //     .attr("width", width)
-      //     .attr("height", height);
+          .attr("width", width)
+          .attr("height", height);
       
-      var map = svg.select("#map");
+      
 
+      // Geojson Data
       d3.json("world-alpha3.json", function(error, world) {
             console.log(world);
-            var geoJSON = topojson.feature(world, world.objects.countries)
-            console.log(geoJSON)
+            var geoJSON = topojson.feature(world, world.objects.countries);
+            console.log(geoJSON);
+      
+      var map = svg.select("#map");
+      // d3.json("northamerica.json", function(error, world) {
+      //       console.log(world);
+      //       var geoJSON = topojson.feature(world, world.objects.continent_North_America_subunits)
+      //       console.log(geoJSON)
 
       // choose projection
-      var proj = d3.geoMercator()
-            .fitSize([window.innerWidth-40, 600], geoJSON);
+      var projection = d3.geoMercator()
+            .fitSize([chart1Width, chart1Height], geoJSON);
       
       // create path
       var path = d3.geoPath()
-            .projection(proj);
-        
-      geoJSON.features = geoJSON.features.filter(function(d) {
-          return d.id !== "ATA";
-      });
+            .projection(projection);
+      
+      // filter the data
+      // geoJSON.features = geoJSON.features.filter(function(d) {
+      //     return d.id !== "ATA";
+      // });
 
-      var countries = map.selectAll("path")
+      var mapgroup = map.selectAll("path")
           .data(geoJSON.features);
-      // enter pattern
-      countries.enter().append("path")
+      // enter the map
+      mapgroup.enter().append("path")
           // d attribute in <path>
           .attr("d", path)
           .attr("fill", "#ccc")
@@ -339,20 +367,294 @@
           .attr("stroke", "#999")
           .attr("stroke-width", "0.5px");
       
-      var mapdata = d3.csv("cleaned2.csv", function(error, csvdata){
-                if(error){
-                    console.log(error);
-                }
+      d3.csv("data/clean4.csv", function(error, csvdata){
+          console.log(csvdata);
+          // data type conversion
+          csvdata.forEach(function(d){
+            d.Latitude = +d.Latitude;
+            d.Longtitude = +d.Longtitude;
+            Year = d3.timeFormat("%Y");
+            d.Year = Year(d.Year);
+          });
 
-                else{ 
-                    console.log(csvdata)
-                };
-            });
-      console.log(mapdata);
+          Vis.data = csvdata;
+          console.log(csvdata);
+          console.log(Vis);
+          console.log(Vis.data);
+          
+          // dots
+          var symbol_map = d3.chart.symbol_map()
+            symbol_map.data(Vis.data)
+            symbol_map(mapgroup)
+          
+          // brush
+
+          var bgroup = svg.append("g")
+                          .attr("transform", "translate(100, 430)")
+          var brush = d3.chart.brush()
+          brush
+            .data(Vis.data)
+            .width(800)
+          brush(bgroup)
+            
+          brush.on("filter", function(filtered) {
+                    //  scatter.data(filtered);
+                    //  scatter.update();
+                     symbol_map.data(filtered)
+                     symbol_map.update();
+          })
+          
+          symbol_map.on("hover", function(hovered) {
+            // scatter.highlight(hovered)
+            brush.highlight(hovered)
+          })
+
+
+      
+
+          // // brush
+          // var brushWidth = chart1Width;
+          // var brushHeight = 50;
+          // var yeardomainMax = d3.max(csvdata, d => d.Year);
+          // console.log(yeardomainMax);
+          // var yeardomainMin = d3.min(csvdata, d => d.Year);
+          // console.log(yeardomainMin);
+
+          // var brush = d3
+          //       .select("#brush")
+          //       .append("svg")
+          //       .attr("width", brushWidth)
+          //       .attr("height", brushHeight);
+
+
+          // var brushScale = d3.scaleLinear()
+          //       .domain([yeardomainMin, yeardomainMax])
+          //       .range([0,brushWidth]);
+          
+          // brush.append("g")
+          //      .attr("class", "brush axis")
+          //      .attr("transform", "translate(0," + brushHeight + ")")
+          //      .call(d3.axisBottom(brushScale)
+          //              .ticks(2)
+          //              .tickPadding(0))
+          //      .attr("text-anchor", null)
+          //      .selectAll("text")
+          //      .attr("x", 6);
+          
+          // brush.append("g")
+          //      .attr("class", "brush")
+          //      .call(d3.brushX()
+          //      .extent([[0, 0], [brushWidth, brushHeight]])
+          //      .on("end", brushended));
+          
+          // function brushended() {
+          //            if (!d3.event.sourceEvent) return; // Only transition after input.
+          //            if (!d3.event.selection) return; // Ignore empty selections.
+          //            var d0 = d3.event.selection.map(x.invert),
+          //                d1 = d0.map(d3.timeDay.round);
+                             
+          //            // If empty when rounded, use floor & ceil instead.
+          //            if (d1[0] >= d1[1]) {
+          //              d1[0] = d3.timeDay.floor(d0[0]);
+          //              d1[1] = d3.timeDay.offset(d1[0]);
+          //            }
+                   
+          //            d3.select(this).transition().call(d3.event.target.move, d1.map(x));
+          //          }
+
+          
+          
+          
+          
+
+
+
+          // plot the dots
+          // var dots = map.selectAll("circle")
+          //   .data(csvdata);
+      
+          // dots.enter().append("circle")
+          // .attr("transform", function(d){
+          //     return "translate(" + projection([+d.Longtitude,+d.Latitude]) + ")";
+          // })
+          // .attr("fill","red")
+          // .attr("r", 0.7)
+          // .on("mouseover", mouseover)
+          // // .on("mousemove", mousemove)
+          // .on("mouseout", mouseout);
+
+          // function mouseover(d) {
+          //   d3.select(this)
+          //     .attr("fill","black")
+          //     .attr("stroke-width", "1px")
+          //     .attr("fill-opacity", "0.5");
+          //   popup.style("opacity", 0.9)
+          //        .style("display", "block")
+          //        .style("top", d3.event.pageY + 20 + "px")
+          //        .style("left", d3.event.pageX + 20 + "px");
+          //   popup.html(
+          //     "<b>" +
+          //       // d.STORM NAME +
+          //       "</b></br>Storm Level: <b>" +
+          //        d.StormLevel+
+          //       "%</b> <br>" 
+          //       // d.properties.comunidad
+          //   );
+          // }
+
+          // function mouseout(d) {
+          //   d3.select(this)
+          //     .attr("fill", "red")
+          //     .attr("stroke-width", ".3")
+          //     .attr("fill-opacity", "1");
+          //   popup.style("opacity", 0);
+          // }
+
+          // // Slider
+
+          // var sliderWidth = chart1Width;
+          // var sliderHeight = 50;
+          // var yeardomainMax = d3.max(csvdata, d => d.Year);
+          // console.log(yeardomainMax);
+          // var yeardomainMin = d3.min(csvdata, d => d.Year);
+          // console.log(yeardomainMin);
+          // var sliderstop = yeardomainMax - yeardomainMin
+
+          // var slider = d3
+          //       .select("#slidingbar")
+          //       .append("svg")
+          //       .attr("width", sliderWidth)
+          //       .attr("height", sliderHeight);
+
+          // var sliderScale = d3.scaleLinear()
+          //       .domain([yeardomainMin, yeardomainMax])
+          //       .range([0,sliderWidth]);
+          
+          // var sliderAxis = d3.axisBottom(sliderScale);
+          // slider.append("g")
+          //       .attr("class", "axis")
+          //       .call(sliderAxis);
+
+          // slider
+          //       .append("g")
+          //       .append("rect")
+          //       .attr("class", "slideraxis")
+          //       .attr("width", sliderWidth)
+          //       .attr("height", 7)
+          //       .attr("x", 0)
+          //       .attr("y", 16);
+          // var drag = d3
+          //       .drag()
+          //       // .origin(function() {
+          //       //   return {
+          //       //     x: d3.select(this).attr("x"),
+          //       //     y: d3.select(this).attr("y")
+          //       //   };
+          //       // })
+          //       .on("start", dragstart)
+          //       .on("drag", dragmove)
+          //       .on("end", dragend);
+
+          // var cursor = slider
+          //       .append("g")
+          //       .attr("class", "move")
+          //       .append("svg")
+          //       .attr("x", sliderWidth-20)
+          //       .attr("y", 7)
+          //       .attr("width", 30)
+          //       .attr("height", 60);
+          
+          // cursor.call(drag);
+
+          // var pointerdata = [
+          //   {
+          //     x: 0,
+          //     y: 0
+          //   },
+          //   {
+          //     x: 0,
+          //     y: 25
+          //   },
+          //   {
+          //     x: 25,
+          //     y: 25
+          //   },
+          //   {
+          //     x: 25,
+          //     y: 0
+          //   }
+          // ];
+
+          // var drawline = d3
+          //   .line()
+          //   .x(function(d) {
+          //     return d.x;
+          //   })
+          //   .y(function(d) {
+          //     return d.y;
+          //   })
+          //   .curve(d3.curveLinear);
+
+          // cursor
+          //   .append("path")
+          //   .attr("class", "cursor")
+          //   .attr("transform", "translate(" + 7 + ",0)")
+          //   .attr("d", drawline(pointerdata))
+          //   .on("mouseover", function() {
+          //       d3.select(".move").style("cursor", "hand");
+          //   });
+          
+          
+          // // define start/drag/end
+          // function dragstart(d) {
+          //   d3.select(".cursor").style("fill", "#D9886C");
+          // }
+          
+          // function dragmove(d) {
+          //   var x = Math.max(0, Math.min(sliderWidth-20, d3.event.x));
+          //   d3.select(this).attr("x", x);
+          //   var z = parseInt(sliderScale.invert(x));
+          //   sliderstop = z;
+          //   filterDot(z);
+          // }
+          
+          // function dragend(d) {
+          //   d3.select(".cursor").style("fill", "");
+          // }
+
+          // function filterDot(index) {
+            
+
+          // }
+
+
+
+          
+
+      
+
+           
+                
+          });
+      
+      // Zoom feature
+      // var zoom = d3.zoom()
+      //       .translateExtent([[0, 0], [chart1Width, chart1Height]])
+      //       .scaleExtent([1, 8])
+      //       .on("zoom", zoomed);
+        
+      // function zoomed() {
+      //     map.attr("transform", d3.event.transform);
+      // }
+      // svg.call(zoom);
+      
+      
       
 
       
       });
+
+      
 
       
 
