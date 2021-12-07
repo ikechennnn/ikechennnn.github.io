@@ -33,6 +33,7 @@
       <div id="Brush">
         <div id="brush"></div>
       </div>
+      <div id="tooltip"></div>
       <div id="Slider">
         <div id="slidingbar"></div>
       </div>
@@ -299,16 +300,15 @@
       <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis ultrices lorem ac metus vulputate, non finibus justo finibus. Phasellus vitae lectus viverra urna porttitor lobortis non quis enim. Nullam vel ultricies sapien, eget scelerisque lorem. Etiam et dolor neque. Aenean quis tempor magna, nec ullamcorper elit. In tellus ipsum, sollicitudin eget pellentesque eu, pulvinar eu lacus. Nulla facilisi. Donec eget lacus id odio sagittis rutrum vehicula sit amet nunc. Lorem ipsum dolor sit amet, consectetur.</p>
     </div>
 
-    <div id="tooltip">
+    <!-- <div id="tooltip">
       <h2 id="title"></h2>
-      <!-- Value: <span id="value"></span> -->
-    </div>
+      Value: <span id="value"></span>
+    </div> -->
 
     <script src="banner.js"></script>
     <!-- <script src="chart1.js"></script> -->
     <script src="chart2.js"></script>
-    <script src="symbol_map.js"></script>
-    <script src="brush.js"></script>
+   
     <script>
 
       
@@ -317,12 +317,6 @@
       var height = 500;
       var chart1Width = document.getElementById("chart1").getBoundingClientRect().width;
       var chart1Height = document.getElementById("chart1").getBoundingClientRect().height;
-
-      // var popup = d3
-      //   .select("#wrapper")
-      //   .append("div")
-      //   .attr("class", "tooltip")
-      //   // .attr("opacity", 0);
 
       var svg = d3.select("#chart1")
           .attr("width", chart1Width)
@@ -384,9 +378,9 @@
           var dots = map.selectAll("circle")
             .data(csvdata);
 
-          var tooltip = d3.select("#chart1")
-                    .append("div")
-                    .attr("class", "tooltip")
+          var tooltip = d3.select("#tooltip")
+                    
+                    .attr("position", "absolute")
                     .style("opacity", 0)
                     .style("background-color", "white")
                     .style("border", "solid")
@@ -413,18 +407,25 @@
               .attr("r",12)
               .attr("stroke-width", "1px")
               .attr("fill-opacity", "1");
-            tooltip.style("opacity", 0.9)
+            tooltip.style("opacity", 1)
                  .style("display", "block")
-                 .style("top", (d3.mouse(this)[1]) + "px")
-                 .style("left", (d3.mouse(this)[0]+70) + "px")
+                //  .style("top", (d3.mouse(this)[1]) + "px")
+                //  .style("left", (d3.mouse(this)[0]+70) + "px")
+                 .style("top", d3.event.pageY + 20 + "px")
+                 .style("left", d3.event.pageX + 20 + "px")
                  .html(
-                  "<b>" +
-                    // d.STORM NAME +
+                  "Year: <b>" +
+                    d.Year+
+                    "</b></br>Name: <b>" +
+                     d.STORMNAME+
                     "</b></br>Storm Level: <b>" +
                      d.STORMLEVEL+
-                    "%</b> <br>" 
-                    // d.properties.comunidad
-                );
+                    "</b></br>Maximum Wind Speed(mph): <b>" +
+                     d.Maximummph +
+                    "</b> <br>" 
+                 );
+
+                 
           }
 
           function mouseover(d) {
@@ -526,21 +527,9 @@
               .remove();
                    
                    
-            dots.on("mouseover", function(d) {
-              d3.select(this)
-              .attr("fill","#c20b1e")
-              .attr("r",12)
-              .attr("stroke-width", "1px")
-              .attr("fill-opacity", "1");
-            })
-          
-            dots.on("mouseout", function(d) {
-              d3.select(this)
-              .attr("fill", "#5d5e99")
-              .attr("r",6)
-              .attr("stroke-width", ".3")
-              .attr("fill-opacity", "1");
-            })
+            dots.on("mouseover", mouseover);
+            dots.on("mousemove", mousemove);
+            dots.on("mouseout", mouseout);
 
           }
 
