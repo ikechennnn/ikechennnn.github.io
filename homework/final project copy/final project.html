@@ -522,7 +522,7 @@
             var selection = d3.event.selection.map(brushscale.invert);
             console.log(parseInt(selection[0]));
             console.log(parseInt(selection[1]));
-            var dataFiltered = csvdata.filter(function(d) {return d.year == parseInt(selection[1]) ;});
+            var dataFiltered = csvdata.filter(function(d) {return d.year < parseInt(selection[1]) ;});
             console.log(dataFiltered);
             dotsupdate(dataFiltered);
           }  
