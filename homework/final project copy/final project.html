@@ -312,8 +312,7 @@
     <script>
 
       
-      var Vis = {};
-      Vis.data = new Array();
+      
       var width = 1350;
       var height = 500;
       var chart1Width = document.getElementById("chart1").getBoundingClientRect().width;
@@ -379,42 +378,21 @@
             d.Year = +d.Year
           });
 
-          Vis.data = csvdata;
-          console.log(csvdata);
-          console.log(Vis);
-          console.log(Vis.data);
-          
-          // // dots
-          // var symbol_map = d3.chart.symbol_map()
-          //   symbol_map.data(Vis.data)
-          //   symbol_map(mapgroup)
-          
-          // // brush
 
-          // var bgroup = svg.append("g")
-          //                 .attr("transform", "translate(100, 430)")
-          // var brush = d3.chart.brush()
-          // brush
-          //   .data(Vis.data)
-          //   .width(800)
-          // brush(bgroup)
-            
-          // brush.on("filter", function(filtered) {
-          //           //  scatter.data(filtered);
-          //           //  scatter.update();
-          //            symbol_map.data(filtered)
-          //            symbol_map.update();
-          // })
-          
-          // symbol_map.on("hover", function(hovered) {
-          //   // scatter.highlight(hovered)
-          //   brush.highlight(hovered)
-          // })
-
-          // plot the dots
+          // dots
           
           var dots = map.selectAll("circle")
             .data(csvdata);
+
+          var tooltip = d3.select("#chart1")
+                    .append("div")
+                    .attr("class", "tooltip")
+                    .style("opacity", 0)
+                    .style("background-color", "white")
+                    .style("border", "solid")
+                    .style("border-width", "2px")
+                    .style("border-radius", "5px")
+                    .style("padding", "5px")
       
           dots.enter().append("circle")
           .attr("transform", function(d){
@@ -423,14 +401,31 @@
           .attr("fill","#5d5e99")
           .attr("r", 6)
           .on("mouseover", mouseover)
-          // .on("mousemove", mousemove)
+          .on("mousemove", mousemove)
           .on("mouseout", mouseout);
 
-          var popup = d3.select("#wrapper")
-                      .append("div")
-                      .attr("class", "tooltip")
-                      .attr("opacity", 0);
           
+          
+
+          function mousemove(d) {
+            d3.select(this)
+              .attr("fill","#c20b1e")
+              .attr("r",12)
+              .attr("stroke-width", "1px")
+              .attr("fill-opacity", "1");
+            tooltip.style("opacity", 0.9)
+                 .style("display", "block")
+                 .style("top", (d3.mouse(this)[1]) + "px")
+                 .style("left", (d3.mouse(this)[0]+70) + "px")
+                 .html(
+                  "<b>" +
+                    // d.STORM NAME +
+                    "</b></br>Storm Level: <b>" +
+                     d.STORMLEVEL+
+                    "%</b> <br>" 
+                    // d.properties.comunidad
+                );
+          }
 
           function mouseover(d) {
             d3.select(this)
@@ -438,18 +433,8 @@
               .attr("r",12)
               .attr("stroke-width", "1px")
               .attr("fill-opacity", "1");
-            popup.style("opacity", 0.9)
-                 .style("display", "block")
-                 .style("top", d3.event.pageY + 20 + "px")
-                 .style("left", d3.event.pageX + 20 + "px");
-            popup.html(
-              "<b>" +
-                // d.STORM NAME +
-                "</b></br>Storm Level: <b>" +
-                 d.StormLevel+
-                "%</b> <br>" 
-                // d.properties.comunidad
-            );
+            tooltip.style("opacity", 0.9)
+                 
           }
 
           function mouseout(d) {
@@ -458,7 +443,7 @@
               .attr("r",6)
               .attr("stroke-width", ".3")
               .attr("fill-opacity", "1");
-            popup.style("opacity", 0);
+            tooltip.style("opacity", 0);
           }
 
           // brush
@@ -468,10 +453,6 @@
           console.log(yeardomainMax);
           var yeardomainMin = d3.min(csvdata, d => d.Year);
           console.log(yeardomainMin);
-
-          var brushScale = d3.scaleOrdinal()
-                    .domain([yeardomainMin, yeardomainMax])
-                    .range([0, chart1Width]);
           
           var brushsvg = d3.select("#Brush").append("svg")
                            .attr("width", brushWidth)
@@ -522,7 +503,7 @@
             var selection = d3.event.selection.map(brushscale.invert);
             console.log(parseInt(selection[0]));
             console.log(parseInt(selection[1]));
-            var dataFiltered = csvdata.filter(function(d) {return d.year <= parseInt(selection[1]) && d.year >= parseInt(selection[0]) ;});
+            var dataFiltered = csvdata.filter(function(d) {return d.Year <= parseInt(selection[1]) && d.Year >= parseInt(selection[0]) ;});
             console.log(dataFiltered);
             dotsupdate(dataFiltered);
           }  
@@ -533,15 +514,15 @@
 
                 
             dots.enter().append("circle")
-                .transition()
+                // .transition()
                 .attr("transform", function(d){
                   return "translate(" + projection([+d.Longtitude,+d.Latitude]) + ")";
                 })
-                .attr("fill","aqua")
+                .attr("fill","#5d5e99")
                 .attr("r", 6);
                 
             dots.exit()
-              .transition()
+              // .transition()
               .remove();
                    
                    
@@ -555,7 +536,7 @@
           
             dots.on("mouseout", function(d) {
               d3.select(this)
-              .attr("fill", "aqua")
+              .attr("fill", "#5d5e99")
               .attr("r",6)
               .attr("stroke-width", ".3")
               .attr("fill-opacity", "1");
@@ -563,124 +544,8 @@
 
           }
 
-          
-
-          // // Slider
-
-          // var sliderWidth = chart1Width;
-          // var sliderHeight = 50;
-          // var yeardomainMax = d3.max(csvdata, d => d.Year);
-          // console.log(yeardomainMax);
-          // var yeardomainMin = d3.min(csvdata, d => d.Year);
-          // console.log(yeardomainMin);
-          // var sliderstop = yeardomainMax - yeardomainMin
-
-          // var slider = d3
-          //       .select("#slidingbar")
-          //       .append("svg")
-          //       .attr("width", sliderWidth)
-          //       .attr("height", sliderHeight);
-
-          // var sliderScale = d3.scaleLinear()
-          //       .domain([yeardomainMin, yeardomainMax])
-          //       .range([0,sliderWidth]);
-          
-          // var sliderAxis = d3.axisBottom(sliderScale);
-          // slider.append("g")
-          //       .attr("class", "axis")
-          //       .call(sliderAxis);
-
-          // slider
-          //       .append("g")
-          //       .append("rect")
-          //       .attr("class", "slideraxis")
-          //       .attr("width", sliderWidth)
-          //       .attr("height", 7)
-          //       .attr("x", 0)
-          //       .attr("y", 16);
-          // var drag = d3
-          //       .drag()
-          //       // .origin(function() {
-          //       //   return {
-          //       //     x: d3.select(this).attr("x"),
-          //       //     y: d3.select(this).attr("y")
-          //       //   };
-          //       // })
-          //       .on("start", dragstart)
-          //       .on("drag", dragmove)
-          //       .on("end", dragend);
-
-          // var cursor = slider
-          //       .append("g")
-          //       .attr("class", "move")
-          //       .append("svg")
-          //       .attr("x", sliderWidth-20)
-          //       .attr("y", 7)
-          //       .attr("width", 30)
-          //       .attr("height", 60);
-          
-          // cursor.call(drag);
-
-          // var pointerdata = [
-          //   {
-          //     x: 0,
-          //     y: 0
-          //   },
-          //   {
-          //     x: 0,
-          //     y: 25
-          //   },
-          //   {
-          //     x: 25,
-          //     y: 25
-          //   },
-          //   {
-          //     x: 25,
-          //     y: 0
-          //   }
-          // ];
-
-          // var drawline = d3
-          //   .line()
-          //   .x(function(d) {
-          //     return d.x;
-          //   })
-          //   .y(function(d) {
-          //     return d.y;
-          //   })
-          //   .curve(d3.curveLinear);
-
-          // cursor
-          //   .append("path")
-          //   .attr("class", "cursor")
-          //   .attr("transform", "translate(" + 7 + ",0)")
-          //   .attr("d", drawline(pointerdata))
-          //   .on("mouseover", function() {
-          //       d3.select(".move").style("cursor", "hand");
-          //   });
-          
-          
-          // // define start/drag/end
-          // function dragstart(d) {
-          //   d3.select(".cursor").style("fill", "#D9886C");
-          // }
-          
-          // function dragmove(d) {
-          //   var x = Math.max(0, Math.min(sliderWidth-20, d3.event.x));
-          //   d3.select(this).attr("x", x);
-          //   var z = parseInt(sliderScale.invert(x));
-          //   sliderstop = z;
-          //   filterDot(z);
-          // }
-          
-          // function dragend(d) {
-          //   d3.select(".cursor").style("fill", "");
-          // }
-
-          // function filterDot(index) {
-            
-
-          // }
+      
+       
 
                 
           });

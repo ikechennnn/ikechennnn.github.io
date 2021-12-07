@@ -1,4 +1,4 @@
-﻿STORM ID,STORM NAME,Year,TIME,Date,Latitude,Longtitude,Maximum sustained wind (in knots),Maximum sustained wind (in mph),STORM LEVEL
+﻿STORM ID,STORM NAME,Year,TIME,Date,Latitude,Longtitude,Maximumknots,Maximummph,STORMLEVEL
 AL011852,UNNAMED,1852,18520826,8/26/52,30.2,-88.6,100,120,3
 AL011856,UNNAMED,1856,18560811,8/11/56,29.7,-91.6,110,132,4
 AL011860,UNNAMED,1860,18600812,8/12/60,30.5,-88.9,100,120,3
