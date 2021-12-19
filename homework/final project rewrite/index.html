@@ -1,0 +1,430 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://unpkg.com/topojson@3"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+    
+    <title>Hurricanes</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+
+    
+    <div id="container">
+    <div id="grid">
+      <div id="banner">
+        <p id="titletext">Atlantic Major Hurricanes Tracker, 1851–2017</p>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ut enim sit amet turpis elementum tristique at in mauris.
+        </p>
+        <p>
+          Created by Muxing Chen
+        </p>
+      </div>
+      <div id="introduction">
+        <p>This is a hurricane tracker that enables you trace the location where tropical storms first became major hurricanes from 1851 to 2017. 
+            You can drag and adjust a brush shape to filter the data with a specific time span. 
+            You can also put your mouse on the dots and get more information about each hurricane. </p>
+      </div>
+
+      
+
+      <div id="infographic">
+        <div id="map">
+            <svg id="mapbase">
+            <g id="mapdraw"></g>
+            </svg>
+            <div id="tooltip"></div>
+        </div>  
+        
+        
+        <div id="brush">
+            <div id="legend">
+                <div class="box"style="background-color: #5a6aa0;"></div>
+                <div class="label" >Major Hurricanes (category 3-5)</div>
+                <div class="box" style="background-color: #d5b197;"></div>
+                <div class="label">Other Hurricanes (catrgory 1-2)</div>
+            </div>
+        </div>
+
+      </div>
+
+      <div id="narrative">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ut enim sit amet turpis elementum tristique at in mauris. Etiam egestas nulla vel leo dictum eleifend. Aenean ac gravida leo. Phasellus sed justo rutrum, iaculis orci vel, fringilla nisi. Pellentesque vestibulum aliquam odio, sed suscipit metus aliquet rutrum. Nam pharetra et nibh a semper. Phasellus a eleifend magna. Nulla vel sapien vulputate, finibus justo ac, convallis odio. Nulla et augue arcu. Duis porta augue laoreet lacus dictum, eu hendrerit sem tempor. Integer condimentum, enim sit amet sollicitudin pretium, ligula leo convallis nibh, eget aliquam ex orci vitae quam. Morbi maximus.</p>
+      </div>
+    </div>
+    </div>  
+
+   
+
+   
+   
+    <script>
+
+      
+      
+        var width = window.innerWidth;
+        var height = window.innerHeight;
+    //   var chart1Width = document.getElementById("chart1").getBoundingClientRect().width;
+    //   var chart1Height = document.getElementById("chart1").getBoundingClientRect().height;
+
+        var mapsvg = d3.select("#mapbase")
+          .attr("width", width)
+          .attr("height", height);
+      
+      
+
+        // Load map data
+        d3.json("world-alpha3.json", function(error, mapdata) {
+            console.log(mapdata);
+            var geoJSON = topojson.feature(mapdata, mapdata.objects.countries);
+            console.log(geoJSON);
+      
+            var map = mapsvg.select("#mapdraw");
+            // d3.json("northamerica.json", function(error, world) {
+            //       console.log(world);
+            //       var geoJSON = topojson.feature(world, world.objects.continent_North_America_subunits)
+            //       console.log(geoJSON)
+            
+            // choose projection
+            var projection = d3.geoMercator()
+                  .fitSize([width, height], geoJSON)
+                  .translate([1650,950])
+                  .scale(900);
+            
+            // create path
+            var path = d3.geoPath()
+                  .projection(projection);
+            
+            // filter the data
+            // geoJSON.features = geoJSON.features.filter(function(d) {
+            //     return d.id !== "ATA";
+            // });
+            
+            var worldmap = map.selectAll("path")
+                .data(geoJSON.features);
+            // enter the map
+            worldmap.enter().append("path")
+                // d attribute in <path>
+                .attr("d", path)
+                .attr("fill", "#252525")
+                .attr("vector-effect","non-scaling-stroke")
+                .attr("stroke", "#999")
+                .attr("stroke-width", "0.4px");
+                
+            d3.csv("data/clean4.csv", function(error, dotdata){
+                console.log(dotdata.filter(function(d){return d.Year == "1851"}));
+                // data type conversion
+                dotdata.forEach(function(d){
+                  d.Latitude = +d.Latitude;
+                  d.Longtitude = +d.Longtitude;
+                  // Year = d3.timeFormat("%Y");
+                  d.Year = +d.Year
+                });
+                console.log(dotdata);
+
+
+                // dots
+          
+                var dots = map.selectAll("circle")
+                              .data(dotdata);
+
+                var tooltip = d3.select("#tooltip") 
+                                .style("position", "absolute")
+                                .style("opacity", 0)
+                                .style("background-color", "white")
+                                .style("border", "solid")
+                                .style("border-width", "2px")
+                                .style("border-radius", "5px")
+                                .style("padding", "5px")
+
+                dots.enter().append("circle")
+                    .attr("transform", function(d){
+                        return "translate(" + projection([+d.Longtitude,+d.Latitude]) + ")";
+                    })
+                    .attr("fill","#5a6aa0")
+                    .attr("r", 6)
+                    .on("mouseover", mouseover)
+                    // .on("mousemove", mousemove)
+                    .on("mouseout", mouseout);
+            
+          
+          
+
+                function mouseover(d) {
+                    d3.select(this)
+                      .attr("fill","#b72242")
+                      .attr("r",12)
+                      .attr("stroke-width", "1px")
+                      .attr("fill-opacity", "1");
+                    tooltip.style("opacity", 1)
+                         .style("display", "block")
+                         .style("top", (d3.event.pageY + 20) + "px")
+                         .style("left", (d3.event.pageX + 20) + "px")
+                         .html(
+                          "Year: <b>" +
+                            d.Year+
+                            "</b></br>Name: <b>" +
+                             d.STORMNAME+
+                            "</b></br>Storm Level: <b>" +
+                             d.STORMLEVEL+
+                            "</b></br>Maximum Wind Speed(mph): <b>" +
+                             d.Maximummph +
+                            "</b> <br>" 
+                         );
+                }
+
+                function mousemove(d) {
+                    d3.select(this)
+                      .attr("fill","#b72242")
+                      .attr("r",12)
+                      .attr("stroke-width", "1px")
+                      .attr("fill-opacity", "1");
+                    // tooltip.style("opacity", 0.9)
+
+                }
+            
+                function mouseout(d) {
+                    d3.select(this)
+                      .attr("fill", "#5a6aa0")
+                      .attr("r",6)
+                      .attr("stroke-width", ".3")
+                      .attr("fill-opacity", "1");
+                    tooltip.style("opacity", 0)
+                }
+
+                
+              
+                
+              
+                d3.csv("data/Count_By_Year.csv", function(error, areadata){
+                    console.log(areadata);
+                    areadata.forEach(function(d){
+                    d.Year = +d.Year;
+                    d.Minor = +d.Minor;
+                    d.Major = +d.Major;
+                    d.Ocean = +d.Ocean
+                    });
+                    console.log(areadata);
+
+                    // brush
+          
+                    var brushWidth = width;
+                    var brushHeight = 150;
+                    var yeardomainMax = d3.max(areadata, d => d.Year);
+                    console.log(yeardomainMax);
+                    var yeardomainMin = d3.min(areadata, d => d.Year);
+                    console.log(yeardomainMin);
+                      
+                    var brushsvg = d3.select("#brush").append("svg")
+                                     .attr("width", brushWidth)
+                                     .attr("height", brushHeight+50)
+                                     .attr("transform", "translate(0," + 20 + ")")
+                                     .append("g")
+                                    //  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                      
+                      
+                    var brushscale = d3.scaleLinear()
+                        .domain([yeardomainMin, yeardomainMax])
+                        .range([0, brushWidth]);
+                      
+                      
+                    // the grids
+                    brushsvg.append("g")
+                        .attr("class", "axis axis--grid")
+                        .attr("transform", "translate(0," + brushHeight + ")")
+                        .call(d3.axisBottom(brushscale)
+                            .ticks(20)
+                            .tickSize(-brushHeight)
+                            // .tickValues([1851,2015])
+                            .tickFormat(function() { return null; }))
+                        .selectAll(".tick")
+                        // .classed("tick--minor", function(d) { return d.getHours(); });
+                 
+                    // ticks of the brush
+                    brushsvg.append("g")
+                        .attr("class", "axis axis--x")
+                        .attr("transform", "translate(0," + brushHeight + ")")
+                        .call(d3.axisBottom(brushscale)
+                            .ticks(9)
+                            .tickValues([1860,1930,2010])
+                            .tickFormat(d3.format("d"))
+                            .tickSize(5)
+                            .tickPadding(0))
+                        .attr("text-anchor", null)
+                        .style("font","20")
+                        .selectAll("text")
+                        .attr("x", 5);
+                 
+                    // append label of x-axis
+                    brushsvg.append("text")
+                        .attr("text-anchor", "end")
+                        .attr("x", 0)
+                        .attr("y", 167 )
+                        .text("Year")
+                        .attr("text-anchor", "start");
+
+
+                    // area chart start
+                    var areaScaleX = d3.scaleLinear()
+                                   .domain([d3.min(areadata, function(d){return d.Year;}),
+                                    d3.max(areadata, function(d){return d.Year;})])
+                                   .range([0, brushWidth]);
+                    // console.log(areaScaleX(1990));
+                  
+                    
+                    
+                    var stack = d3.stack()
+                                  .keys(["Minor", "Major"]);
+                    
+                    var stackColor = ["#d5b197","#5a6aa0"];
+                  
+                    var stackedData = stack(areadata);
+                    console.log(stackedData);
+                  
+                    var areaScaleY = d3.scaleLinear()
+                                   .domain([0, d3.max(stackedData[stackedData.length-1], function(d){return d[1]})])
+                                   .range([brushHeight, 0]);
+                    
+                    // y-axis               
+                    brushsvg.append("g")
+                            .call(d3.axisRight(areaScaleY)
+                            .ticks(4)
+                            .tickValues([10,20])
+                            .tickFormat(d3.format("d"))
+                            .tickSize(5)
+                            .tickPadding(0))
+                            .attr("text-anchor", null)
+                            .style("font","20")
+                            .selectAll("text")
+                            .attr("x", 5);
+                    
+                    // label of y-axis
+                    brushsvg.append("text")
+                        .attr("text-anchor", "end")
+                        .attr("x", 5)
+                        .attr("y", 25)
+                        .text("# of Hurricane Activity")
+                        .attr("text-anchor", "start");
+
+                    var area = d3.area()
+                                 .curve(d3.curveCardinal)
+                                 .x(function(d){return areaScaleX(d.data.Year);})
+                                 .y0(function(d){return areaScaleY(d[0]);})
+                                 .y1(function(d){return areaScaleY(d[1]);})
+                    
+                    var series = brushsvg.selectAll("g.series")
+                                         .data(stackedData)
+                                         .enter()
+                                         .append("g")
+                                         .attr("class", "series");
+                    series.append("path")
+                          .style("fill", function(d,i){return stackColor[i];})
+                          .attr("d", function(d){return area(d);});
+                    // area chart end
+                      
+                    // append brush (to make the bruch is at the front of the area chart)
+                    brushsvg.append("g")
+                        .attr("class", "brush")
+                        .call(d3.brushX()
+                            .extent([[0, 0], [brushWidth, brushHeight]])
+                            .on("brush", brushed));
+                      
+                    function brushed() {
+                      if (!d3.event.sourceEvent) return; // Only transition after input.
+                      if (!d3.event.selection) return; // Ignore empty selections.
+                      var selection = d3.event.selection.map(brushscale.invert);
+                      console.log(parseInt(selection[0]));
+                      console.log(parseInt(selection[1]));
+                      var dataFiltered = dotdata.filter(function(d) {return d.Year <= parseInt(selection[1]) && d.Year >= parseInt(selection[0]) ;});
+                      console.log(dataFiltered);
+                      dotsupdate(dataFiltered);
+                    }  
+                    
+                    function dotsupdate(filter) {
+                      var dots = map.selectAll("circle")
+                                  .data(filter);
+                 
+                          
+                      dots.enter().append("circle")
+                          // .transition()
+                          .attr("transform", function(d){
+                            return "translate(" + projection([+d.Longtitude,+d.Latitude]) + ")";
+                          })
+                          .attr("fill","#5a6aa0")
+                          .attr("r", 6);
+                          
+                      dots.exit()
+                        // .transition()
+                        .remove();
+                             
+                             
+                      dots.on("mouseover", mouseover);
+                      dots.on("mousemove", mousemove);
+                      dots.on("mouseout", mouseout);
+                         
+                    }
+
+                  
+
+                   // line chart
+
+                    var lineScaleY = d3.scaleLinear()
+                                   .domain([d3.min(areadata, d => d.Ocean), d3.max(areadata, d => d.Ocean)])
+                                   .range([brushHeight, 0]);
+                    console.log(d3.min(areadata, d => d.Ocean));
+                    console.log(d3.max(areadata, d => d.Ocean));
+                    
+                    var line = d3.line()
+                                    .x(function(d) {return areaScaleX(d.Year);})
+                                    .y(function(d) {return lineScaleY(d.Ocean);}) 
+                                    .curve(d3.curveCardinal)
+
+    
+
+                    brushsvg.append("path")
+                        .data(areadata)
+                        .attr("class", "line")
+                        .attr("d", line)
+                        .attr("fill", "none")
+                        .attr("stroke", "black")
+                        .attr("stroke-width", 1.5);
+
+            
+                });
+
+      
+       
+
+                
+            });
+      
+    //   // Zoom feature
+    //   var zoom = d3.zoom()
+    //         .translateExtent([[0, 0], [chart1Width, chart1Height]])
+    //         .scaleExtent([1, 4])
+    //         .on("zoom", zoomed);
+        
+    //   function zoomed() {
+    //       map.attr("transform", d3.event.transform);
+    //   }
+    //   svg.call(zoom);
+      
+      
+      
+
+      
+        });
+
+      
+
+      
+
+    </script>
+    
+    
+  </body>>  
+</html>

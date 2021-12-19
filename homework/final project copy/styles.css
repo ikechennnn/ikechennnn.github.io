@@ -1,5 +1,5 @@
 body {
-    font-family:'Trade Gothic LT W01 Bd CnNo-20';
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     background-image: url("pic/banner.png");
     background-size: cover;
@@ -61,16 +61,6 @@ body {
     
 }
 
-/* #tooltip {
-    display: none;
-    position: absolute;
-} */
-
-/* svg {
-    background-color: #FFFFFF;
-
-} */
-
 #chart1 {
     background-color: #000000;
 
@@ -89,3 +79,4 @@ body {
 .axis--grid .tick--minor line {
   stroke-opacity: .5;
 }
+
