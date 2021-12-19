@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://unpkg.com/topojson@3"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     
     <title>Hurricanes</title>
     <link rel="stylesheet" href="styles.css" />
@@ -17,17 +17,17 @@
     <div id="grid">
       <div id="banner">
         <p id="titletext">Atlantic Major Hurricanes Tracker, 1851–2017</p>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ut enim sit amet turpis elementum tristique at in mauris.
-        </p>
-        <p>
-          Created by Muxing Chen
-        </p>
+        <p> Created by Muxing Chen </p>
       </div>
       <div id="introduction">
-        <p>This is a hurricane tracker that enables you trace the location where tropical storms first became major hurricanes from 1851 to 2017. 
-            You can drag and adjust a brush shape to filter the data with a specific time span. 
-            You can also put your mouse on the dots and get more information about each hurricane. </p>
+        <p>
+          This is a hurricane tracker that enables you trace the location<br> where tropical storms first became major hurricanes from 1851 to 2017. 
+        </p>
+        <p>
+          You can <span style="background-color: whitesmoke">click and drag</span> on the area chart below to crate a brush shape that filters the data with a specific time span.<br>
+          <br>You can also <span style="background-color: whitesmoke">put your mouse</span> on the dots and get more information about each hurricane.   
+        </p>
+        
       </div>
 
       
@@ -52,9 +52,28 @@
 
       </div>
 
-      <div id="narrative">
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ut enim sit amet turpis elementum tristique at in mauris. Etiam egestas nulla vel leo dictum eleifend. Aenean ac gravida leo. Phasellus sed justo rutrum, iaculis orci vel, fringilla nisi. Pellentesque vestibulum aliquam odio, sed suscipit metus aliquet rutrum. Nam pharetra et nibh a semper. Phasellus a eleifend magna. Nulla vel sapien vulputate, finibus justo ac, convallis odio. Nulla et augue arcu. Duis porta augue laoreet lacus dictum, eu hendrerit sem tempor. Integer condimentum, enim sit amet sollicitudin pretium, ligula leo convallis nibh, eget aliquam ex orci vitae quam. Morbi maximus.</p>
+      <div id="narrative1">
+          <h3>
+            A Brief history of hurricanes
+          </h3>
+        <p>
+            The data map and area chart show us a big picture of major hurricane history from both time and space aspect. we are easy to capture a trend that both sea surface temperature and hurricane activities increased drastically since the 1930s. Not only the total quantity of hurricanes rocketed but also the number of major hurricanes, indicating more intense became more frequent. And 1930s, as a “split”, is also a milestone timing of the second industrial revolution, which is an interesting connection between hurricane history and human history.
+        </p>
+            
       </div>
+
+      <div id="narrative2">
+        <h3>
+          Something bigger
+        </h3>
+      <p>
+        The history of hurricanes is not only the history of hurricanes, but also the history of human activities. From the area chart, we found that the frequent activities of hurricanes are closely related to sea surface temperature, which is highly correlated with carbon dioxide emissions. The logic behind this is that though the ocean can absorb part of the carbon dioxide, the ability to absorb will decrease after reaching a tipping point, causing more greenhouse gases to stay in the atmosphere. And this is the main factor that leads to global warming, which will increase the ocean temperature.
+
+        Carbon dioxide emission from fossil fuel is mainly produced by human activities and have rocketed since the 1930s. So if we put hurricanes activity, sea surface temperature and CO2 emissions together, we will get a bigger picture.
+      </p>
+          
+      </div>
+
     </div>
     </div>  
 
@@ -66,7 +85,7 @@
 
       
       
-        var width = window.innerWidth;
+        var width = window.innerWidth-70;
         var height = window.innerHeight;
     //   var chart1Width = document.getElementById("chart1").getBoundingClientRect().width;
     //   var chart1Height = document.getElementById("chart1").getBoundingClientRect().height;
@@ -261,6 +280,7 @@
                  
                     // append label of x-axis
                     brushsvg.append("text")
+                        .attr("class", "axistext")
                         .attr("text-anchor", "end")
                         .attr("x", 0)
                         .attr("y", 167 )
@@ -304,10 +324,20 @@
                     
                     // label of y-axis
                     brushsvg.append("text")
+                        .attr("class", "axistext")
                         .attr("text-anchor", "end")
                         .attr("x", 5)
                         .attr("y", 25)
                         .text("# of Hurricane Activity")
+                        .attr("text-anchor", "start");
+
+                    // data sources
+                    brushsvg.append("text")
+                        .attr("class", "datasource")
+                        .attr("text-anchor", "end")
+                        .attr("x", 0)
+                        .attr("y", 200)
+                        .text("Source: NOAA, U.S. National Weather Service, U.S. National Hurricane Center")
                         .attr("text-anchor", "start");
 
                     var area = d3.area()
@@ -383,15 +413,24 @@
                                     .y(function(d) {return lineScaleY(d.Ocean);}) 
                                     .curve(d3.curveCardinal)
 
-    
+                    brushsvg.selectAll("path")
+                            
+                            .data(areadata)
+                            .enter()
+                            .append("path")
+                              .attr("class", "line")
+                              .attr("d", line)
+                              .attr("fill", "none")
+                              .attr("stroke", "black")
+                              .attr("stroke-width", 1.5);
 
-                    brushsvg.append("path")
-                        .data(areadata)
-                        .attr("class", "line")
-                        .attr("d", line)
-                        .attr("fill", "none")
-                        .attr("stroke", "black")
-                        .attr("stroke-width", 1.5);
+                    // brushsvg.append("path")
+                    //     .data(areadata)
+                    //     .attr("class", "line")
+                    //     .attr("d", line)
+                    //     .attr("fill", "none")
+                    //     .attr("stroke", "black")
+                    //     .attr("stroke-width", 1.5);
 
             
                 });
@@ -402,16 +441,16 @@
                 
             });
       
-    //   // Zoom feature
-    //   var zoom = d3.zoom()
-    //         .translateExtent([[0, 0], [chart1Width, chart1Height]])
-    //         .scaleExtent([1, 4])
-    //         .on("zoom", zoomed);
+      // Zoom feature
+      var zoom = d3.zoom()
+            .translateExtent([[0, 0], [width, height]])
+            .scaleExtent([1, 4])
+            .on("zoom", zoomed);
         
-    //   function zoomed() {
-    //       map.attr("transform", d3.event.transform);
-    //   }
-    //   svg.call(zoom);
+      function zoomed() {
+          map.attr("transform", d3.event.transform);
+      }
+      mapsvg.call(zoom);
       
       
       
