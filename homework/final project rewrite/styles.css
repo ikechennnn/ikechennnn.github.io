@@ -150,3 +150,10 @@ div #brush #legend .label{
     font-size: 10pt;
     font-weight:normal;
 }
+
+
+#map #tooltip{
+    font-family: 'Roboto Condensed', sans-serif; 
+    font-size: 10pt;
+    font-weight:normal;
+}
